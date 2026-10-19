@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lab Network Port Scanner | MSEC</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage" class="login-page">
+
+    <div class="login-left">
+
+        <div class="college-brand">
+            <div class="college-logo">M</div>
+
+            <div>
+                <h1>Meenakshi Sundararajan</h1>
+                <p>Engineering College</p>
+            </div>
+        </div>
+
+        <div class="login-content">
+
+            <span class="login-badge">NETWORK ADMINISTRATION</span>
+
+            <h2>Lab Network<br><span>Port Scanner</span></h2>
+
+            <p>
+                Monitor laboratory computers, network services,
+                ports and device availability from one centralized dashboard.
+            </p>
+
+            <div class="login-features">
+
+                <div>
+                    <span>✓</span>
+                    Device Discovery
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Port & Service Monitoring
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Live Network Dashboard
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Scan History & Comparison
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="login-right">
+
+        <div class="login-card">
+
+            <div class="mobile-logo">MSEC</div>
+
+            <h2>Welcome Back</h2>
+
+            <p class="login-subtitle">
+                Sign in to access the laboratory network dashboard
+            </p>
+
+            <form id="loginForm">
+
+                <label>Administrator ID</label>
+
+                <div class="input-icon">
+                    <span>👤</span>
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter administrator ID"
+                        required
+                    >
+                </div>
+
+
+                <label>Password</label>
+
+                <div class="input-icon">
+                    <span>🔒</span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-btn"
+                        onclick="togglePassword()"
+                    >
+                        👁
+                    </button>
+                </div>
+
+
+                <div class="login-options">
+
+                    <label class="remember">
+                        <input type="checkbox" id="rememberMe">
+                        Remember me
+                    </label>
+
+                    <span class="demo-login">
+                        Demo: admin / admin123
+                    </span>
+
+                </div>
+
+
+                <button class="login-btn" type="submit">
+                    LOGIN TO DASHBOARD →
+                </button>
+
+                <p id="loginError" class="login-error"></p>
+
+            </form>
+
+
+            <div class="security-note">
+                🔐 Authorized college network administrators only
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MAIN APPLICATION ================= -->
+
+<div id="app" class="app hidden">
+
+    <!-- SIDEBAR -->
+
+    <aside id="sidebar" class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-logo">M</div>
+
+            <div>
+                <h2>MSEC</h2>
+                <span>Lab Network</span>
+            </div>
+
+        </div>
+
+
+        <!-- SELECT DEPARTMENT -->
+
+        <div class="sidebar-selector">
+
+            <label>DEPARTMENT</label>
+
+            <select id="departmentSelect">
+                <option value="CSE">CSE</option>
+                <option value="IT">IT</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="CIVIL">CIVIL</option>
+                <option value="MECH">MECHANICAL</option>
+                <option value="ADS">ADS</option>
+            </select>
+
+        </div>
+
+
+        <!-- SELECT LAB -->
+
+        <div class="sidebar-selector">
+
+            <label>LABORATORY</label>
+
+            <select id="labSelect"></select>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active" data-page="dashboard">
+                <span>▦</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item" data-page="scan">
+                <span>⌁</span>
+                Network Scan
+            </button>
+
+            <button class="nav-item" data-page="devices">
+                <span>▣</span>
+                Devices
+            </button>
+
+            <button class="nav-item" data-page="services">
+                <span>⚙</span>
+                Services & Ports
+            </button>
+
+            <button class="nav-item" data-page="network">
+                <span>⌘</span>
+                Network Overview
+            </button>
+
+            <button class="nav-item" data-page="history">
+                <span>◷</span>
+                Scan History
+            </button>
+
+            <button class="nav-item" data-page="settings">
+                <span>⚙</span>
+                Settings
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="authorized-box">
+                <span class="pulse-dot"></span>
+
+                <div>
+                    <strong>Authorized Network</strong>
+                    <small>Scanning Restricted</small>
+                </div>
+            </div>
+
+
+            <button class="logout-btn" onclick="logout()">
+                ↪ Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                ☰
+            </button>
+
+
+            <div class="breadcrumb">
+
+                <span>MSEC</span>
+                <b>/</b>
+                <span id="headerDepartment">IT</span>
+                <b>/</b>
+                <strong id="headerLab">Lab 1</strong>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <div class="demo-status">
+                    <span></span>
+                    DEMO / SIMULATION
+                </div>
+
+                <button
+                    class="icon-btn"
+                    onclick="toggleTheme()"
+                    title="Toggle theme"
+                >
+                    ◐
+                </button>
+
+                <button
+                    class="icon-btn"
+                    onclick="refreshDashboard()"
+                    title="Refresh"
+                >
+                    ↻
+                </button>
+
+
+                <div class="admin-profile">
+
+                    <div class="avatar">A</div>
+
+                    <div>
+                        <strong>Administrator</strong>
+                        <small>Lab Admin</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <div class="content">
+
+
+            <!-- ================= DASHBOARD ================= -->
+
+            <section id="page-dashboard" class="page active-page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">LABORATORY MONITORING</span>
+
+                        <h1>Lab Network Overview</h1>
+
+                        <p>
+                            Monitor computers and required services in
+                            <strong id="dashboardLab">IT - Lab 1</strong>
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        onclick="goToScan()"
+                    >
+                        + START NETWORK SCAN
+                    </button>
+
+                </div>
+
+
+                <div class="warning-banner">
+
+                    <span>⚠</span>
+
+                    <div>
+                        <strong>Authorized Network Only</strong>
+                        <p>
+                            Scan only authorized college laboratory networks.
+                            Public Internet scanning is restricted.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- STAT CARDS -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon blue">▣</div>
+
+                        <div>
+                            <span>Total Devices</span>
+                            <strong id="totalDevices">40</strong>
+                            <small>in selected lab</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon green">✓</div>
+
+                        <div>
+                            <span>Online Devices</span>
+                            <strong id="onlineDevices">34</strong>
+                            <small class="positive">● Reachable</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon red">×</div>
+
+                        <div>
+                            <span>Offline Devices</span>
+                            <strong id="offlineDevices">6</strong>
+                            <small>Not reachable</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon purple">⚙</div>
+
+                        <div>
+                            <span>Active Services</span>
+                            <strong id="activeServices">58</strong>
+                            <small>Configured services</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon orange">◉</div>
+
+                        <div>
+                            <span>Open Ports</span>
+                            <strong id="openPorts">72</strong>
+                            <small>Across devices</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon cyan">◷</div>
+
+                        <div>
+                            <span>Last Scan</span>
+                            <strong id="lastScan">2 min</strong>
+                            <small id="lastScanStatus">Completed</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHARTS -->
+
+                <div class="dashboard-grid">
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Device Availability</h3>
+                                <span>Current laboratory status</span>
+                            </div>
+
+                            <span class="live-label">
+                                ● LIVE
+                            </span>
+
+                        </div>
+
+
+                        <div class="donut-area">
+
+                            <div
+                                id="deviceDonut"
+                                class="donut"
+                            >
+                                <div>
+                                    <strong>85%</strong>
+                                    <span>Online</span>
+                                </div>
+                            </div>
+
+
+                            <div class="legend">
+
+                                <div>
+                                    <span class="legend-dot online"></span>
+                                    Online
+                                    <b id="onlineLegend">34</b>
+                                </div>
+
+                                <div>
+                                    <span class="legend-dot offline"></span>
+                                    Offline
+                                    <b id="offlineLegend">6</b>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Service Availability</h3>
+                                <span>Monitored network services</span>
+                            </div>
+
+                        </div>
+
+
+                        <div id="serviceChart" class="bar-chart">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECENT SCAN -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Recent Scan</h3>
+                            <span>Latest network discovery activity</span>
+                        </div>
+
+                        <button
+                            class="text-btn"
+                            onclick="showPage('history')"
+                        >
+                            View History →
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Scan ID</th>
+                                    <th>Network Range</th>
+                                    <th>Start Time</th>
+                                    <th>Duration</th>
+                                    <th>Devices</th>
+                                    <th>Ports</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="recentScanTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEVICE STATUS -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Device Status</h3>
+                            <span>Laboratory computers</span>
+                        </div>
+
+                        <button
+                            class="text-btn"
+                            onclick="showPage('devices')"
+                        >
+                            View All →
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Status</th>
+                                    <th>Open Ports</th>
+                                    <th>Services</th>
+                                    <th>Last Seen</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="dashboardDeviceTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= SCAN ================= -->
+
+            <section id="page-scan" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">NETWORK DISCOVERY</span>
+                        <h1>Network Scan</h1>
+
+                        <p>
+                            Discover devices and monitor network services
+                            in the selected laboratory.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="scan-layout">
+
+                    <div class="panel scan-form-panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <h3>Configure Scan</h3>
+                                <span>Authorized laboratory network only</span>
+                            </div>
+                        </div>
+
+
+                        <label>Department</label>
+
+                        <select id="scanDepartment">
+                            <option>CSE</option>
+                            <option>IT</option>
+                            <option>ECE</option>
+                            <option>EEE</option>
+                            <option>CIVIL</option>
+                            <option>MECHANICAL</option>
+                            <option>ADS</option>
+                        </select>
+
+
+                        <label>Laboratory</label>
+
+                        <select id="scanLab"></select>
+
+
+                        <label>Network Range</label>
+
+                        <input
+                            id="networkRange"
+                            type="text"
+                            value="192.168.1.0/24"
+                            placeholder="192.168.1.0/24"
+                        >
+
+                        <small class="input-help">
+                            Example: 192.168.1.0/24
+                        </small>
+
+
+                        <label>Scan Type</label>
+
+                        <div class="scan-types">
+
+                            <label class="radio-card">
+                                <input
+                                    type="radio"
+                                    name="scanType"
+                                    value="quick"
+                                    checked
+                                >
+                                <span>
+                                    <b>Quick Scan</b>
+                                    <small>Fast device discovery</small>
+                                </span>
+                            </label>
+
+
+                            <label class="radio-card">
+                                <input
+                                    type="radio"
+                                    name="scanType"
+                                    value="standard"
+                                >
+                                <span>
+                                    <b>Standard Scan</b>
+                                    <small>Devices + ports</small>
+                                </span>
+                            </label>
+
+
+                            <label class="radio-card">
+                                <input
+                                    type="radio"
+                                    name="scanType"
+                                    value="service"
+                                >
+                                <span>
+                                    <b>Service Scan</b>
+                                    <small>Ports + services</small>
+                                </span>
+                            </label>
+
+                        </div>
+
+
+                        <label>Ports to Scan</label>
+
+                        <div class="port-checkboxes">
+
+                            <label>
+                                <input type="checkbox" checked value="21">
+                                21 FTP
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="22">
+                                22 SSH
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="23">
+                                23 Telnet
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="53">
+                                53 DNS
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="80">
+                                80 HTTP
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="443">
+                                443 HTTPS
+                            </label>
+
+                            <label>
+                                <input type="checkbox" checked value="3389">
+                                3389 RDP
+                            </label>
+
+                        </div>
+
+
+                        <label>Custom Ports</label>
+
+                        <input
+                            id="customPorts"
+                            type="text"
+                            placeholder="Example: 8080, 8443"
+                        >
+
+
+                        <div class="authorized-note">
+                            <b>⚠ Scan only authorized networks.</b>
+                            <span>
+                                The backend must validate the network range
+                                against configured college laboratory ranges.
+                            </span>
+                        </div>
+
+
+                        <div class="scan-buttons">
+
+                            <button
+                                id="startScanBtn"
+                                class="primary-btn large"
+                                onclick="startScan()"
+                            >
+                                ▶ START SCAN
+                            </button>
+
+                            <button
+                                id="stopScanBtn"
+                                class="danger-btn large hidden"
+                                onclick="stopScan()"
+                            >
+                                ■ STOP SCAN
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SCAN PROGRESS -->
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Scan Progress</h3>
+                                <span id="scanStatusText">
+                                    Ready to scan
+                                </span>
+                            </div>
+
+                            <span id="scanPercent">0%</span>
+
+                        </div>
+
+
+                        <div class="progress-container">
+
+                            <div class="progress-bar">
+                                <div
+                                    id="progressFill"
+                                    class="progress-fill"
+                                ></div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="scan-steps">
+
+                            <div
+                                id="step1"
+                                class="scan-step"
+                            >
+                                <span>1</span>
+                                <div>
+                                    <b>Discovering devices</b>
+                                    <small>ICMP / ARP discovery</small>
+                                </div>
+                            </div>
+
+
+                            <div
+                                id="step2"
+                                class="scan-step"
+                            >
+                                <span>2</span>
+                                <div>
+                                    <b>Scanning ports</b>
+                                    <small>TCP / UDP probing</small>
+                                </div>
+                            </div>
+
+
+                            <div
+                                id="step3"
+                                class="scan-step"
+                            >
+                                <span>3</span>
+                                <div>
+                                    <b>Detecting services</b>
+                                    <small>Service availability</small>
+                                </div>
+                            </div>
+
+
+                            <div
+                                id="step4"
+                                class="scan-step"
+                            >
+                                <span>4</span>
+                                <div>
+                                    <b>Processing results</b>
+                                    <small>Saving scan results</small>
+                                </div>
+                            </div>
+
+
+                            <div
+                                id="step5"
+                                class="scan-step"
+                            >
+                                <span>✓</span>
+                                <div>
+                                    <b>Completed</b>
+                                    <small>Results ready</small>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="scanResult"
+                            class="scan-result hidden"
+                        >
+
+                            <div class="success-heading">
+                                ✓ SCAN COMPLETED
+                            </div>
+
+
+                            <div class="scan-result-grid">
+
+                                <div>
+                                    <span>Devices</span>
+                                    <strong id="resultDevices">40</strong>
+                                </div>
+
+                                <div>
+                                    <span>Online</span>
+                                    <strong id="resultOnline">34</strong>
+                                </div>
+
+                                <div>
+                                    <span>Offline</span>
+                                    <strong id="resultOffline">6</strong>
+                                </div>
+
+                                <div>
+                                    <span>Open Ports</span>
+                                    <strong id="resultPorts">72</strong>
+                                </div>
+
+                                <div>
+                                    <span>Services</span>
+                                    <strong id="resultServices">58</strong>
+                                </div>
+
+                                <div>
+                                    <span>Duration</span>
+                                    <strong id="resultDuration">12 sec</strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= DEVICES ================= -->
+
+            <section id="page-devices" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">DEVICE MANAGEMENT</span>
+                        <h1>Laboratory Devices</h1>
+
+                        <p>
+                            <span id="deviceDepartmentTitle">IT</span>
+                            /
+                            <span id="deviceLabTitle">Lab 1</span>
+                        </p>
+                    </div>
+
+                    <button
+                        class="secondary-btn"
+                        onclick="refreshDevices()"
+                    >
+                        ↻ REFRESH
+                    </button>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="filter-bar">
+
+                        <input
+                            id="deviceSearch"
+                            type="search"
+                            placeholder="Search device or IP address..."
+                            oninput="renderDevices()"
+                        >
+
+
+                        <select
+                            id="statusFilter"
+                            onchange="renderDevices()"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+
+
+                        <select
+                            id="serviceFilter"
+                            onchange="renderDevices()"
+                        >
+                            <option value="all">All Services</option>
+                            <option value="HTTP">HTTP</option>
+                            <option value="HTTPS">HTTPS</option>
+                            <option value="SSH">SSH</option>
+                            <option value="FTP">FTP</option>
+                            <option value="RDP">RDP</option>
+                        </select>
+
+
+                        <select
+                            id="sortFilter"
+                            onchange="renderDevices()"
+                        >
+                            <option value="ip">Sort by IP</option>
+                            <option value="name">Sort by Name</option>
+                            <option value="status">Sort by Status</option>
+                            <option value="ports">Sort by Ports</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Status</th>
+                                    <th>Open Ports</th>
+                                    <th>Services</th>
+                                    <th>Last Seen</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="devicesTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= DEVICE DETAILS ================= -->
+
+            <section id="page-device-details" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">DEVICE DETAILS</span>
+                        <h1 id="detailDeviceName">PC-01</h1>
+                        <p id="detailDeviceSubtitle">
+                            Network device information
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        onclick="scanSelectedDevice()"
+                    >
+                        ▶ SCAN THIS DEVICE
+                    </button>
+
+                </div>
+
+
+                <div class="device-detail-grid">
+
+                    <div class="panel">
+
+                        <div class="device-profile">
+
+                            <div class="device-large-icon">
+                                🖥
+                            </div>
+
+                            <div>
+
+                                <h2 id="detailName">PC-01</h2>
+
+                                <p id="detailIP">
+                                    192.168.1.101
+                                </p>
+
+                                <span
+                                    id="detailStatus"
+                                    class="status online"
+                                >
+                                    ● ONLINE
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail-info">
+
+                            <div>
+                                <span>Department</span>
+                                <strong id="detailDepartment">IT</strong>
+                            </div>
+
+                            <div>
+                                <span>Laboratory</span>
+                                <strong id="detailLab">Lab 1</strong>
+                            </div>
+
+                            <div>
+                                <span>Last Seen</span>
+                                <strong id="detailLastSeen">
+                                    2 min ago
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Response Time</span>
+                                <strong id="detailResponse">
+                                    12 ms
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Port Summary</h3>
+                                <span>Detected network ports</span>
+                            </div>
+
+                            <strong
+                                id="detailOpenPortCount"
+                                class="port-count"
+                            >
+                                3 OPEN
+                            </strong>
+
+                        </div>
+
+
+                        <div class="table-container">
+
+                            <table>
+
+                                <thead>
+                                    <tr>
+                                        <th>Port</th>
+                                        <th>Protocol</th>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="detailPortsTable"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Device Scan History</h3>
+                            <span>Previous checks for this device</span>
+                        </div>
+
+                    </div>
+
+                    <div id="deviceHistory" class="history-cards"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= SERVICES ================= -->
+
+            <section id="page-services" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">SERVICE MONITORING</span>
+
+                        <h1>Services & Ports</h1>
+
+                        <p>
+                            Configure services monitored across
+                            the selected laboratory.
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        onclick="openServiceModal()"
+                    >
+                        + ADD SERVICE
+                    </button>
+
+                </div>
+
+
+                <div id="serviceCards" class="service-grid"></div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Monitored Port Configuration</h3>
+                            <span>
+                                Enable or disable service monitoring
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Port</th>
+                                    <th>Protocol</th>
+                                    <th>Monitoring</th>
+                                    <th>Availability</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="serviceTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= NETWORK ================= -->
+
+            <section id="page-network" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">NETWORK TOPOLOGY</span>
+
+                        <h1>Network Overview</h1>
+
+                        <p>
+                            Visual representation of the selected
+                            laboratory network.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="network-info-bar">
+
+                    <div>
+                        <span>COLLEGE</span>
+                        <strong>Meenakshi Sundararajan Engineering College</strong>
+                    </div>
+
+                    <div>
+                        <span>DEPARTMENT</span>
+                        <strong id="networkDepartment">IT</strong>
+                    </div>
+
+                    <div>
+                        <span>LAB</span>
+                        <strong id="networkLab">Lab 1</strong>
+                    </div>
+
+                    <div>
+                        <span>NETWORK</span>
+                        <strong>192.168.1.0/24</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="topology-panel">
+
+                    <div class="topology-level">
+
+                        <div class="network-node server">
+
+                            <div class="node-icon">🖥</div>
+
+                            <strong>Monitoring Server</strong>
+
+                            <span>Lab Network Scanner</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="network-line vertical"></div>
+
+
+                    <div class="topology-level">
+
+                        <div class="network-node switch">
+
+                            <div class="node-icon">⌘</div>
+
+                            <strong>Lab Switch</strong>
+
+                            <span>Network Gateway</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="network-line vertical"></div>
+
+
+                    <div
+                        id="topologyDevices"
+                        class="topology-devices"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= HISTORY ================= -->
+
+            <section id="page-history" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">SCAN RECORDS</span>
+
+                        <h1>Scan History</h1>
+
+                        <p>
+                            Review and compare previous laboratory scans.
+                        </p>
+                    </div>
+
+                    <div class="heading-buttons">
+
+                        <button
+                            class="secondary-btn"
+                            onclick="exportAllScans()"
+                        >
+                            ↓ EXPORT
+                        </button>
+
+                        <button
+                            class="primary-btn"
+                            onclick="openCompareModal()"
+                        >
+                            ⇄ COMPARE SCANS
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Scan ID</th>
+                                    <th>Network</th>
+                                    <th>Date</th>
+                                    <th>Devices</th>
+                                    <th>Open Ports</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="historyTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="comparisonResult"
+                    class="panel hidden"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Scan Comparison</h3>
+                            <span>Changes between selected scans</span>
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="comparisonContent"
+                        class="comparison-content"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= SETTINGS ================= -->
+
+            <section id="page-settings" class="page">
+
+                <div class="page-heading">
+
+                    <div>
+                        <span class="eyebrow">SYSTEM CONFIGURATION</span>
+
+                        <h1>Settings</h1>
+
+                        <p>
+                            Configure network monitoring preferences.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-grid">
+
+                    <div class="panel settings-section">
+
+                        <h3>Network Configuration</h3>
+
+                        <label>Default Network Range</label>
+
+                        <input
+                            id="settingNetwork"
+                            value="192.168.1.0/24"
+                        >
+
+                        <label>Scan Interval</label>
+
+                        <select id="scanInterval">
+                            <option value="5">Every 5 minutes</option>
+                            <option value="10">Every 10 minutes</option>
+                            <option value="15">Every 15 minutes</option>
+                            <option value="30">Every 30 minutes</option>
+                            <option value="60">Every 1 hour</option>
+                        </select>
+
+                        <label>Scan Timeout</label>
+
+                        <input
+                            id="scanTimeout"
+                            type="number"
+                            value="10"
+                            min="1"
+                        >
+
+                    </div>
+
+
+                    <div class="panel settings-section">
+
+                        <h3>Port Configuration</h3>
+
+                        <label>Default Ports</label>
+
+                        <input
+                            id="settingPorts"
+                            value="21,22,23,53,80,443,3389"
+                        >
+
+                        <label>Custom Ports</label>
+
+                        <input
+                            id="settingCustomPorts"
+                            placeholder="8080,8443"
+                        >
+
+                        <label>Default Protocol</label>
+
+                        <select id="defaultProtocol">
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="panel settings-section">
+
+                        <h3>Monitoring</h3>
+
+                        <div class="setting-toggle">
+
+                            <div>
+                                <strong>Dashboard Auto Refresh</strong>
+                                <span>Refresh device status automatically</span>
+                            </div>
+
+                            <label class="switch">
+                                <input
+                                    id="autoRefresh"
+                                    type="checkbox"
+                                    checked
+                                >
+                                <span></span>
+                            </label>
+
+                        </div>
+
+
+                        <div class="setting-toggle">
+
+                            <div>
+                                <strong>Scheduled Scan</strong>
+                                <span>Run periodic laboratory scans</span>
+                            </div>
+
+                            <label class="switch">
+                                <input
+                                    id="scheduledScan"
+                                    type="checkbox"
+                                >
+                                <span></span>
+                            </label>
+
+                        </div>
+
+
+                        <div class="setting-toggle">
+
+                            <div>
+                                <strong>Notifications</strong>
+                                <span>Show scan completion alerts</span>
+                            </div>
+
+                            <label class="switch">
+                                <input
+                                    id="notifications"
+                                    type="checkbox"
+                                    checked
+                                >
+                                <span></span>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel settings-section">
+
+                        <h3>System</h3>
+
+                        <label>Theme</label>
+
+                        <select
+                            id="themeSelect"
+                            onchange="changeThemeFromSetting()"
+                        >
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+
+
+                        <div class="admin-settings">
+
+                            <div class="avatar large">
+                                A
+                            </div>
+
+                            <div>
+                                <strong>Administrator</strong>
+                                <span>Lab Network Administrator</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-save">
+
+                    <button
+                        class="primary-btn"
+                        onclick="saveSettings()"
+                    >
+                        SAVE SETTINGS
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= DEVICE MODAL ================= -->
+
+<div
+    id="deviceModal"
+    class="modal-overlay hidden"
+    onclick="closeModalOutside(event,'deviceModal')"
+>
+
+    <div class="modal">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('deviceModal')"
+        >
+            ×
+        </button>
+
+        <div id="modalDeviceContent"></div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SERVICE MODAL ================= -->
+
+<div
+    id="serviceModal"
+    class="modal-overlay hidden"
+    onclick="closeModalOutside(event,'serviceModal')"
+>
+
+    <div class="modal">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('serviceModal')"
+        >
+            ×
+        </button>
+
+        <h2>Add Monitored Service</h2>
+
+        <p class="modal-subtitle">
+            Add a TCP or UDP service to the monitoring list.
+        </p>
+
+
+        <label>Service Name</label>
+
+        <input
+            id="newServiceName"
+            placeholder="Example: MySQL"
+        >
+
+
+        <label>Port</label>
+
+        <input
+            id="newServicePort"
+            type="number"
+            placeholder="3306"
+        >
+
+
+        <label>Protocol</label>
+
+        <select id="newServiceProtocol">
+            <option value="TCP">TCP</option>
+            <option value="UDP">UDP</option>
+        </select>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('serviceModal')"
+            >
+                CANCEL
+            </button>
+
+            <button
+                class="primary-btn"
+                onclick="addService()"
+            >
+                ADD SERVICE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= COMPARE MODAL ================= -->
+
+<div
+    id="compareModal"
+    class="modal-overlay hidden"
+>
+
+    <div class="modal">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('compareModal')"
+        >
+            ×
+        </button>
+
+        <h2>Compare Scans</h2>
+
+        <p class="modal-subtitle">
+            Select two scans to identify network changes.
+        </p>
+
+
+        <label>Previous Scan</label>
+
+        <select id="previousScan"></select>
+
+
+        <label>Current Scan</label>
+
+        <select id="currentScan"></select>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('compareModal')"
+            >
+                CANCEL
+            </button>
+
+            <button
+                class="primary-btn"
+                onclick="compareScans()"
+            >
+                COMPARE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div id="toastContainer"></div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
